@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello IndexController!{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <main role="main">
+
+        <section class="jumbotron text-center">
+            <div class="container">
+                <a href="{{ path('index') }}">
+                    <h1 class="jumbotron-heading">Home</h1>
+                </a>
+
+            </div>
+        </section>
+
+        <div class="album py-5 bg-light">
+            <div class="container">
+
+                <div class="row" id="main_content">
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('build/index/js/index.min.js') }}"></script>
+{% endblock %}
