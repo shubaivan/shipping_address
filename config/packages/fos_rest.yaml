@@ -1,0 +1,20 @@
+fos_rest:
+  body_listener: true
+  format_listener:  true
+  param_fetcher_listener: force
+  view:
+    view_response_listener: 'force'
+    formats:
+      json: true
+      jsonp: false
+      xml: false
+      rss: false
+    mime_types:
+      json: ['application/json', 'application/x-json']
+  routing_loader:
+    default_format:  json
+  exception:
+    enabled: true
+    messages:
+      Symfony\Component\HttpKernel\Exception\BadRequestHttpException: true
+      Symfony\Component\HttpKernel\Exception\HttpException: true

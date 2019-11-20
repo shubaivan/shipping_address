@@ -1,6 +1,8 @@
 parameters:
     locale: 'en'
     app.logout_listener.class: App\Listener\LogoutListener
+    doctrine.object.constructor.class: App\Serializer\Construction\DoctrineObjectConstructor
+    app.object_manager.class: App\Service\ObjectManager
 services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -18,3 +20,23 @@ services:
         class: "%app.logout_listener.class%"
         arguments:
             - "@doctrine.orm.default_entity_manager"
+
+    app_serialize.object_constructor:
+      class: '%doctrine.object.constructor.class%'
+      public: false
+      arguments:
+        - "@doctrine"
+        - "@jms_serializer.unserialize_object_constructor"
+
+    jms_serializer.object_constructor:
+      public: false
+      alias: app_serialize.object_constructor
+
+    app.object_manager:
+      class: "%app.object_manager.class%"
+      arguments:
+        - "@jms_serializer"
+        - "@validator"
+        - "@request_stack"
+        - "@security.token_storage"
+      public: true
