@@ -43,7 +43,7 @@
         <div class="navbar navbar-dark bg-dark shadow-sm">
             <div class="container d-flex justify-content-between">
                 <a href="{{ path('index') }}" class="navbar-brand d-flex align-items-center">
-                    <i class="fas fa-video"></i>
+                    <i class="fas fa-home"></i>
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader"
                         aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,6 +52,16 @@
             </div>
         </div>
     </header>
+
+    <div class="alert alert-danger" role="alert" style="display: none">
+        <h4 class="alert-heading">Error</h4>
+        <p class="mb-0"><i class="fa fa-exclamation-circle"></i>Warning</p>
+    </div>
+
+    <div class="alert alert-success" role="alert" style="display: none">
+        <h4 class="alert-heading">Successul!</h4>
+        <p class="mb-0"><i class="fab fa-angellist"></i>Successul</p>
+    </div>
 {% endblock %}
 {% block javascripts %}
     {{ encore_entry_script_tags('app') }}

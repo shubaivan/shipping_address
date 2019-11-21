@@ -13,6 +13,7 @@ use JMS\Serializer\Annotation;
 class ShippingAddress
 {
     const GROUP_PUT = 'put_group';
+    const GROUP_GET = 'get_group';
     const GROUP_POST = 'post_group';
 
     use TimestampableEntity;
@@ -27,7 +28,9 @@ class ShippingAddress
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={ShippingAddress::GROUP_POST})
-     * @Annotation\Groups({ShippingAddress::GROUP_PUT, ShippingAddress::GROUP_POST})
+     * @Annotation\Groups({
+     *     ShippingAddress::GROUP_PUT, ShippingAddress::GROUP_POST, ShippingAddress::GROUP_GET
+     *     })
      */
     private $address;
 
@@ -65,5 +68,15 @@ class ShippingAddress
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     * @Annotation\VirtualProperty()
+     * @Annotation\Groups({ShippingAddress::GROUP_GET})
+     */
+    public function getSerializedCreatedAt()
+    {
+        return $this->createdAt ? $this->createdAt->format('Y-m-d H:i:s') : '';
     }
 }

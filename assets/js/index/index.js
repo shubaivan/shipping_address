@@ -1,7 +1,7 @@
-import printActionFunctions from './parts/indexActions.js';
+import shippingAddressForm from './parts/indexActions.js';
 
 document.addEventListener("DOMContentLoaded", function () {
-    printActionFunctions();
+    shippingAddressForm();
 });
 
 

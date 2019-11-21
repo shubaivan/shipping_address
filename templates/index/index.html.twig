@@ -1,26 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello IndexController!{% endblock %}
+{% block title %}Profile!{% endblock %}
 
 {% block body %}
     {{ parent() }}
-    <main role="main">
+    <main role="main" class="my-4">
 
-        <section class="jumbotron text-center">
-            <div class="container">
-                <a href="{{ path('index') }}">
-                    <h1 class="jumbotron-heading">My Profile</h1>
-                </a>
+        <div class="container">
 
-            </div>
-        </section>
-
-        <div class="album py-5 bg-light">
-            <div class="container">
-
-                <div class="row" id="main_content">
+            <div class="row">
+                <div class="col-md-6" id="shipping-address-form-block">
 
                 </div>
+                <div class="col-md-auto my-4" id="shipping-address-list">
+
+                </div>
+
             </div>
         </div>
 

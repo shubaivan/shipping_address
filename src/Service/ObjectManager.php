@@ -4,8 +4,6 @@ namespace App\Service;
 
 use App\Exception\ValidatorException;
 use JMS\Serializer\DeserializationContext;
-use JMS\Serializer\SerializationContext;
-use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -58,7 +56,6 @@ class ObjectManager
      * @param string $class
      * @param null|string $requestType
      * @param array $groups
-     * @param array $data
      *
      * @return array|\JMS\Serializer\scalar|mixed|object
      * @throws ValidatorException
@@ -67,26 +64,23 @@ class ObjectManager
     public function startProcessingEntity(
         string $class,
         ?string $requestType = 'request',
-        array $groups = [],
-        array $data = []
+        array $groups = []
     )
     {
-        $serializedData = $this->getRequestDataRepresent($class, $requestType, $groups, $data);
-
-        return $this->handleEntity($serializedData, $class, $groups);
+        return $this->deserializeEntity(
+            $this->getRequestDataRepresent($requestType),
+            $class,
+            $groups
+        );
     }
 
     /**
-     * @param string $class
-     * @param null|string $requestType
-     * @param array $groups
+     * @param string|null $requestType
      * @param array $data
-     * @return array|mixed|resource|string
+     * @return array|resource|string
      */
-    public function getRequestDataRepresent(
-        string $class,
+    private function getRequestDataRepresent(
         ?string $requestType = 'request',
-        array $groups = [],
         array $data = []
     )
     {
@@ -126,41 +120,6 @@ class ObjectManager
     }
 
     /**
-     * @param $groups
-     * @param $serializedData
-     * @param $class
-     *
-     * @return array|\JMS\Serializer\scalar|mixed|object
-     * @throws ValidatorException
-     *
-     */
-    public function handleEntity($serializedData, $class, $groups = [])
-    {
-        if (is_array($serializedData)) {
-            $serializedData = $this->getSerializer()
-                ->serialize($serializedData, 'json');
-        }
-        $deserializationContext = null;
-        $validateGroups = [];
-        if ($groups) {
-            $deserializationContext = DeserializationContext::create()->setGroups($groups);
-            $validateGroups = $groups;
-        }
-
-        $dataValidate = $this->getSerializer()
-            ->deserialize(
-                $serializedData,
-                $class,
-                'json',
-                $deserializationContext
-            );
-
-        $this->validateEntity($dataValidate, $validateGroups);
-
-        return $dataValidate;
-    }
-
-    /**
      * @param object $entity
      * @param array $validateGroups
      *
@@ -182,23 +141,6 @@ class ObjectManager
     }
 
     /**
-     * @param $entity
-     * @param array $groups
-     * @return mixed|string
-     */
-    public function serializerEntity($entity, $groups = [])
-    {
-        $serializationContext = null;
-        if ($groups) {
-            $serializationContext = SerializationContext::create()
-                ->setGroups($groups);
-        }
-
-        return $this->getSerializer()
-            ->serialize($entity, 'json', $serializationContext);
-    }
-
-    /**
      * @return SerializerInterface
      */
     private function getSerializer()
@@ -212,5 +154,30 @@ class ObjectManager
     private function getValidatorInterface()
     {
         return $this->validator;
+    }
+
+    /**
+     * @param $serializedData
+     * @param $class
+     * @param $groups
+     * @param $type
+     * @return array|\JMS\Serializer\scalar|mixed|object
+     */
+    private function deserializeEntity($serializedData, $class, $groups, $type = 'json')
+    {
+        $deserializationContext = null;
+        if ($groups) {
+            $deserializationContext = DeserializationContext::create()->setGroups($groups);
+        }
+
+        $dataValidate = $this->getSerializer()
+            ->deserialize(
+                $serializedData,
+                $class,
+                $type,
+                $deserializationContext
+            );
+
+        return $dataValidate;
     }
 }
