@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ShippingAddress;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -19,6 +20,42 @@ class ShippingAddressRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ShippingAddress::class);
+    }
+
+    /**
+     * @param User|object $user
+     * @return int
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getCountDefaultByUser($user)
+    {
+        return $this->createQueryBuilder('s')
+            ->select('COUNT(s.id)')
+            ->where('s.defaultAddress = :defaultAddress')
+            ->andWhere('s.user != :user')
+            ->setParameters([
+                'defaultAddress' => 1,
+                'user' => $user
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @return ShippingAddress[]
+     */
+    public function getByDefault(ShippingAddress $address)
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s')
+            ->where('s.defaultAddress = :defaultAddress')
+            ->andWhere('s.id != :id')
+            ->setParameters([
+                'defaultAddress' => 1,
+                'id' => $address->getId()
+            ])
+            ->getQuery()
+            ->getResult();
     }
 
     /**
@@ -60,5 +97,23 @@ class ShippingAddressRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
         $entityManager->persist($shippingAddress);
         $entityManager->flush();
+    }
+
+    /**
+     * @param $entity
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function persist($entity)
+    {
+        $this->getEntityManager()->persist($entity);
+    }
+
+    /**
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function flush()
+    {
+        $this->getEntityManager()->flush();
     }
 }

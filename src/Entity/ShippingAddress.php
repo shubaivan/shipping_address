@@ -22,6 +22,7 @@ class ShippingAddress
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Annotation\Groups({ShippingAddress::GROUP_GET})
      */
     private $id;
 
@@ -33,6 +34,15 @@ class ShippingAddress
      *     })
      */
     private $address;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Assert\NotBlank(groups={ShippingAddress::GROUP_POST})
+     * @Annotation\Groups({
+     *     ShippingAddress::GROUP_PUT, ShippingAddress::GROUP_POST, ShippingAddress::GROUP_GET
+     *     })
+     */
+    private $defaultAddress = false;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="shippingAddress")
@@ -78,5 +88,13 @@ class ShippingAddress
     public function getSerializedCreatedAt()
     {
         return $this->createdAt ? $this->createdAt->format('Y-m-d H:i:s') : '';
+    }
+
+    /**
+     * @param bool $defaultAddress
+     */
+    public function setDefaultAddress(bool $defaultAddress): void
+    {
+        $this->defaultAddress = $defaultAddress;
     }
 }

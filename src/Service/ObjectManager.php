@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ObjectManager
+abstract class ObjectManager
 {
     /**
      * @var SerializerInterface
@@ -29,7 +29,7 @@ class ObjectManager
     /**
      * @var TokenStorageInterface
      */
-    private $tokenStorageInterface;
+    protected $tokenStorageInterface;
 
     /**
      * Authenticator constructor.
@@ -67,7 +67,7 @@ class ObjectManager
         array $groups = []
     )
     {
-        return $this->deserializeEntity(
+        return $this->handleEntity(
             $this->getRequestDataRepresent($requestType),
             $class,
             $groups
@@ -160,10 +160,11 @@ class ObjectManager
      * @param $serializedData
      * @param $class
      * @param $groups
-     * @param $type
-     * @return array|\JMS\Serializer\scalar|mixed|object
+     * @param string $type
+     * @return array|\JMS\Serializer\scalar|object
+     * @throws ValidatorException
      */
-    private function deserializeEntity($serializedData, $class, $groups, $type = 'json')
+    private function handleEntity($serializedData, $class, $groups, $type = 'json')
     {
         $deserializationContext = null;
         if ($groups) {
@@ -177,6 +178,8 @@ class ObjectManager
                 $type,
                 $deserializationContext
             );
+
+        $this->validateEntity($dataValidate);
 
         return $dataValidate;
     }

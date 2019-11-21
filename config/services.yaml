@@ -3,6 +3,7 @@ parameters:
     app.logout_listener.class: App\Listener\LogoutListener
     doctrine.object.constructor.class: App\Serializer\Construction\DoctrineObjectConstructor
     app.object_manager.class: App\Service\ObjectManager
+    app.shipping_address_object_manager.class: App\Service\ShippingAddressObjectManager
 services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -33,10 +34,19 @@ services:
       alias: app_serialize.object_constructor
 
     app.object_manager:
+      abstract: true
       class: "%app.object_manager.class%"
       arguments:
-        - "@jms_serializer"
-        - "@validator"
-        - "@request_stack"
-        - "@security.token_storage"
-      public: true
+        $serializer: "@jms_serializer"
+        $validatorInterface: "@validator"
+        $requestStack: "@request_stack"
+        $tokenStorageInterface: "@security.token_storage"
+
+
+    app.shipping_address_object_manager:
+      parent: 'app.object_manager'
+      class: "%app.shipping_address_object_manager.class%"
+      autowire: true
+      autoconfigure: false
+      arguments:
+        $shippingAddressRepository: '@App\Repository\ShippingAddressRepository'

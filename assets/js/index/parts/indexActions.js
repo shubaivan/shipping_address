@@ -3,7 +3,9 @@ export default function shippingAddressForm() {
     let confValue = {
         from_id: 'shipping-address-form',
         formBlock: 'shipping-address-form-block',
-        addressList: 'shipping-address-list'
+        addressList: 'shipping-address-list',
+        addressHeader: 'item_shipping_address_header',
+        listAddresses: 'list_addresses'
     };
 
     let formBlock = $('#' + confValue.formBlock);
@@ -14,6 +16,30 @@ export default function shippingAddressForm() {
     let addressList = $('#' + confValue.addressList);
     if (addressList.length > 0) {
         getList();
+    }
+    addOnchangeToRadio();
+
+    function addOnchangeToRadio() {
+        $(document).on('change', '.select_default_address', function (e) {
+            let current = $(this);
+            updateAddressItem(current);
+        });
+    }
+
+    function updateAddressItem(item) {
+        $.ajax({
+            type: "PUT",
+            url: getApiUrlPut(),
+            data: prepareAjaxItem(item),
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data) {
+                showSuccessAlert();
+            },
+            error: function (result) {
+                showErrorAlert($.parseJSON(result.responseText));
+            }
+        });
     }
 
     function getList() {
@@ -32,9 +58,12 @@ export default function shippingAddressForm() {
     }
 
     function handleListData(data) {
-        $.each(data.collection, function (key, value) {
-            addressList.append(getItemShippingAddress(value))
-        });
+        if (data.collection.length > 0) {
+            setItemShippingAddressHeader();
+            $.each(data.collection, function (key, value) {
+                addressList.append(getItemShippingAddress(value))
+            });
+        }
     }
 
     function generateForm() {
@@ -102,7 +131,7 @@ export default function shippingAddressForm() {
     }
 
     function showErrorAlert(result) {
-        let textBody = document.getElementsByClassName('alert-danger')[0].getElementsByTagName('p')[0]
+        let textBody = document.getElementsByClassName('alert-danger')[0].getElementsByTagName('p')[0];
         $(textBody).text('').append(prepareErrorMessage(result));
         $('.alert-danger').show();
         setTimeout(function () {
@@ -119,18 +148,54 @@ export default function shippingAddressForm() {
     }
 
     function renderSuccessfulData(data) {
-        return $('#shipping-address-list').prepend(getItemShippingAddress(data))
+        if ($('.' + confValue.addressHeader).length < 1) {
+            setItemShippingAddressHeader();
+        }
+
+        return $('.' + confValue.addressHeader).after(getItemShippingAddress(data))
+    }
+
+    function setItemShippingAddressHeader() {
+        if ($('.' + confValue.addressHeader).length < 1
+        ) {
+            $('#' + confValue.addressList).append($('<div />', {class: 'row ' + confValue.addressHeader}).append(
+                $('<div />', {class: 'col-sm border', text: 'Address'}),
+                $('<div />', {class: 'col-sm border', text: 'Date'}),
+                $('<div />', {class: 'col-sm border', text: 'Default'})
+            ));
+        }
     }
 
     function getItemShippingAddress(data) {
         return $('<div />', {class: 'row'}).append(
             $('<div />', {class: 'col-sm border', text: data.address}),
-            $('<div />', {class: 'col-sm border', text: data.serialized_created_at})
+            $('<div />', {class: 'col-sm border', text: data.serialized_created_at}),
+            $('<div />', {class: 'col-sm border'}).append(
+                $('<input />', {
+                    type: 'radio',
+                    name: 'default',
+                    value: data.id,
+                    class: 'select_default_address',
+                    checked: data.default_address
+                })
+            )
         );
+    }
+
+    function prepareAjaxItem(item) {
+        return JSON.stringify({
+            'id': item.val(),
+            'default_address': true
+        });
     }
 
     function prepareAjaxBody() {
         return JSON.stringify(getFormObj(confValue.from_id));
+    }
+
+    function getApiUrlPut() {
+        return window.Routing.generate(
+            'put_shipping_address');
     }
 
     function getApiUrlPost() {

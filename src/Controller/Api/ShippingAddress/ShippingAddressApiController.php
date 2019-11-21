@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Exception\ValidatorException;
 use App\Repository\ShippingAddressRepository;
 use App\Service\ObjectManager;
+use App\Service\ShippingAddressObjectManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View as RestView;
 use FOS\RestBundle\Request\ParamFetcher;
@@ -17,6 +18,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ShippingAddressApiController extends AbstractRestController
 {
@@ -26,22 +28,22 @@ class ShippingAddressApiController extends AbstractRestController
     private $shippingAddressRepository;
 
     /**
-     * @var ObjectManager $objectManager
+     * @var ShippingAddressObjectManager $shippingAddressObjectManager
      */
-    private $objectManager;
+    private $shippingAddressObjectManager;
 
     /**
      * ShippingAddressApiController constructor.
      * @param ShippingAddressRepository $shippingAddressRepository
-     * @param ObjectManager $objectManager
+     * @param ShippingAddressObjectManager $shippingAddressObjectManager
      */
     public function __construct(
         ShippingAddressRepository $shippingAddressRepository,
-        ObjectManager $objectManager
+        ShippingAddressObjectManager $shippingAddressObjectManager
     )
     {
         $this->shippingAddressRepository = $shippingAddressRepository;
-        $this->objectManager = $objectManager;
+        $this->shippingAddressObjectManager = $shippingAddressObjectManager;
     }
 
     /**
@@ -124,20 +126,52 @@ class ShippingAddressApiController extends AbstractRestController
     public function postShippingAddressAction()
     {
         try {
-            /** @var ShippingAddress $model */
-            $model = $this->getObjectManager()->startProcessingEntity(
-                ShippingAddress::class,
-                'request',
-                [ShippingAddress::GROUP_POST]
-            );
-            /** @var User $user */
-            $user = $this->getUser();
-            $model->setUser($user);
-            $this->getObjectManager()->validateEntity($model, [ShippingAddress::GROUP_POST]);
-            $this->getShippingAddressRepository()->save($model);
+            $model = $this->getShippingAddressObjectManager()->createEntity();
 
             return $this->createSuccessResponse(
-                $model
+                $model, [ShippingAddress::GROUP_GET]
+            );
+        } catch (ValidatorException $e) {
+            $view = $this->view($e->getErrors(), Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            $view = $this->view((array)$e->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+
+        return $this->handleView($view);
+    }
+
+    /**
+     * put Shipping Address by id.
+     * <strong>Simple example:</strong><br />
+     * http://endpoint/api/shippings/addresses <br>.
+     *
+     * @ApiDoc(
+     * resource = true,
+     * description = "put Shipping Address by id",
+     * authentication=true,
+     *  parameters={
+     *
+     *  },
+     * statusCodes = {
+     *      200 = "Returned when successful",
+     *      400 = "Bad request"
+     * },
+     * section="Shipping Address"
+     * )
+     *
+     * @RestView()
+     *
+     * @return Response|View
+     *
+     * @IsGranted({"ROLE_ADMIN", "ROLE_USER"})*
+     */
+    public function putShippingAddressAction()
+    {
+        try {
+            $model = $this->getShippingAddressObjectManager()->updateEntity();
+
+            return $this->createSuccessResponse(
+                $model, [ShippingAddress::GROUP_GET]
             );
         } catch (ValidatorException $e) {
             $view = $this->view($e->getErrors(), Response::HTTP_BAD_REQUEST);
@@ -157,10 +191,10 @@ class ShippingAddressApiController extends AbstractRestController
     }
 
     /**
-     * @return ObjectManager
+     * @return ShippingAddressObjectManager
      */
-    public function getObjectManager(): ObjectManager
+    public function getShippingAddressObjectManager(): ShippingAddressObjectManager
     {
-        return $this->objectManager;
+        return $this->shippingAddressObjectManager;
     }
 }
