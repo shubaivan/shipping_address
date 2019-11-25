@@ -32,9 +32,9 @@ class ShippingAddressRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->select('COUNT(s.id)')
             ->where('s.defaultAddress = :defaultAddress')
-            ->andWhere('s.user != :user')
+            ->andWhere('s.user = :user')
             ->setParameters([
-                'defaultAddress' => 1,
+                'defaultAddress' => 't',
                 'user' => $user
             ])
             ->getQuery()
@@ -51,7 +51,7 @@ class ShippingAddressRepository extends ServiceEntityRepository
             ->where('s.defaultAddress = :defaultAddress')
             ->andWhere('s.id != :id')
             ->setParameters([
-                'defaultAddress' => 1,
+                'defaultAddress' => 't',
                 'id' => $address->getId()
             ])
             ->getQuery()
