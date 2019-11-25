@@ -64,20 +64,23 @@ class ShippingAddressObjectManager extends ObjectManager
      */
     public function updateEntity()
     {
-        /** @var ShippingAddress $model */
-        $model = $this->startProcessingEntity(
-            ShippingAddress::class,
-            'request',
-            [ShippingAddress::GROUP_PUT]
-        );
-
-        $defaultShippingAddresses = $this->getShippingAddressRepository()->getByDefault($model);
+        $defaultShippingAddresses = $this->getShippingAddressRepository()
+            ->getByDefault();
         if (count($defaultShippingAddresses)) {
             foreach ($defaultShippingAddresses as $address) {
                 $address->setDefaultAddress(false);
             }
             $this->getShippingAddressRepository()->persist($address);
         }
+
+        $this->getShippingAddressRepository()->flush();
+
+        /** @var ShippingAddress $model */
+        $model = $this->startProcessingEntity(
+            ShippingAddress::class,
+            'request',
+            [ShippingAddress::GROUP_PUT]
+        );
 
         $this->getShippingAddressRepository()->flush();
 

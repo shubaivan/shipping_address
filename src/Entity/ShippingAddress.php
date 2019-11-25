@@ -9,6 +9,13 @@ use JMS\Serializer\Annotation;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ShippingAddressRepository")
+ * @ORM\Table(
+ *     uniqueConstraints={@ORM\UniqueConstraint(
+ *     name="default_uniq_index",
+ *     columns={"user_id", "default_address"},
+ *     options={"where": "(default_address != 'f')"}
+ *     )
+ * })
  */
 class ShippingAddress
 {

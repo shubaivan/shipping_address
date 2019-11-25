@@ -81,8 +81,10 @@ class ShippingAddressApiController extends AbstractRestController
         try {
             return $this->createSuccessResponse(
                 [
-                    'collection' => $this->getShippingAddressRepository()->getList($paramFetcher),
-                    'count' => $this->getShippingAddressRepository()->getList($paramFetcher, true)
+                    'collection' => $this->getShippingAddressRepository()
+                        ->getList($paramFetcher, $this->getUser()),
+                    'count' => $this->getShippingAddressRepository()
+                        ->getList($paramFetcher, $this->getUser(), true)
                 ], [ShippingAddress::GROUP_GET]
             );
         } catch (\Exception $e) {
