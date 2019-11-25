@@ -49,7 +49,7 @@ class ShippingAddressApiController extends AbstractRestController
      *
      * @ApiDoc(
      * resource = true,
-     * description = "get Serials",
+     * description = "get shippings addresses",
      * authentication=true,
      *  parameters={
      *
@@ -101,7 +101,7 @@ class ShippingAddressApiController extends AbstractRestController
      *
      * @ApiDoc(
      * resource = true,
-     * description = "post Shipping Address by id",
+     * description = "post Shipping Address",
      * authentication=true,
      *  parameters={
      *
