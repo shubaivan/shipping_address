@@ -45,9 +45,11 @@ export default function shippingAddressForm() {
     function getList() {
         $.ajax({
             type: "GET",
-            url: getApiUrlGet(),
+            url: getApiUrlGet() + '/?user_id=' + user_id,
             contentType: "application/json",
             dataType: "json",
+            username: gate_access_user,
+            password: gate_access_psw,
             success: function (data) {
                 handleListData(data);
             },

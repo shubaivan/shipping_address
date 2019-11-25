@@ -4,6 +4,9 @@ parameters:
     doctrine.object.constructor.class: App\Serializer\Construction\DoctrineObjectConstructor
     app.object_manager.class: App\Service\ObjectManager
     app.shipping_address_object_manager.class: App\Service\ShippingAddressObjectManager
+
+    gate_access_user: '%env(resolve:GATE_ACCESS_USER)%'
+    gate_access_psw: '%env(resolve:GATE_ACCESS_PASSWORD)%'
 services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

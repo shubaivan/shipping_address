@@ -15,6 +15,11 @@ security:
                 users:
                     admin@admin: { password: "111", roles: [ 'ROLE_ADMIN' ] }
 
+        gate:
+            memory:
+                users:
+                    '%gate_access_user%': { password: '%gate_access_psw%', roles: [ 'ROLE_GATE' ] }
+
         app_user_provider:
             entity:
                 class: App\Entity\User
@@ -24,6 +29,13 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        api:
+            pattern: ^/api/shipping/address/data
+            http_basic:
+                provider: gate
+            provider: gate
+
         main:
             logout:
                 path:   app_logout
@@ -35,5 +47,6 @@ security:
                     - App\Security\AppMyAuthAuthenticator
 
     access_control:
+        - { path: ^/api/shipping/address/data, role: ROLE_GATE }
         - { path: ^/index, roles: [ROLE_USER, ROLE_ADMIN] }
         - { path: ^/doc, roles: [ROLE_USER, ROLE_ADMIN] }

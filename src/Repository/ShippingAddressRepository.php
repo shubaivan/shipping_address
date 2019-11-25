@@ -58,19 +58,20 @@ class ShippingAddressRepository extends ServiceEntityRepository
 
     /**
      * @param ParamFetcher $paramFetcher
-     * @param User|object $user
+     * @param User|object|null $user
      * @param bool $count
      * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getList(ParamFetcher $paramFetcher, User $user, $count = false)
+    public function getList(ParamFetcher $paramFetcher, $user, $count = false)
     {
 
         $qb = $this->createQueryBuilder('s');
-//        0: An exception occurred while executing 'UPDATE shipping_address SET default_address = ?, updated_at = ? WHERE id = ?' with params [1, "2019-11-25 15:13:30", 6]: SQLSTATE[23505]: Unique violation: 7 ERROR: duplicate key value violates unique constraint "default_uniq_index" DETAIL: Key (user_id, default_address)=(2, t) already exists.
-        $qb
-            ->where('s.user = :user')
-            ->setParameter('user', $user);
+        if ($paramFetcher->get('user_id')) {
+            $qb
+                ->where('s.user = :user')
+                ->setParameter('user', $paramFetcher->get('user_id'));
+        }
         if ($count) {
             $qb
                 ->select('COUNT(s.id)');

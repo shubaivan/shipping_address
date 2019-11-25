@@ -87,6 +87,9 @@
         }
 
         let user_roles = getJSonObject("{{ app.user ? app.user.roles|json_encode() : "{}" }}");
+        let user_id = "{{ app.user ? app.user.id : "0" }}";
+        let gate_access_user = '{{ gate_access_user }}';
+        let gate_access_psw = '{{ gate_access_psw }}';
     </script>
 {% endblock %}
 </body>

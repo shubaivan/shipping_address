@@ -66,8 +66,9 @@ class ShippingAddressApiController extends AbstractRestController
      * @param ParamFetcher $paramFetcher
      * @return Response|View
      *
-     * @IsGranted({"ROLE_ADMIN", "ROLE_USER"})
+     * @IsGranted({"ROLE_ADMIN", "ROLE_USER", "ROLE_GATE"})
      *
+     * @Rest\QueryParam(name="user_id", requirements="\d+", description="user id")
      * @Rest\QueryParam(name="count", requirements="\d+", default="10", description="Count entity at one page")
      * @Rest\QueryParam(name="page", requirements="\d+", default="1", description="Number of page to be shown")
      * @Rest\QueryParam(name="sort_by", strict=true, requirements="^[a-zA-Z]+", default="createdAt", description="Sort by", nullable=true)
