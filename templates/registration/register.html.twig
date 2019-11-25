@@ -3,15 +3,54 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+    {{ parent() }}
 
-    {{ form_start(registrationForm) }}
-    {{ form_row(registrationForm.email) }}
-    {{ form_row(registrationForm.firstName) }}
-    {{ form_row(registrationForm.lastName) }}
-    {{ form_row(registrationForm.plainPassword.first) }}
-    {{ form_row(registrationForm.plainPassword.second) }}
+    <main role="main">
+        <div class="container">
+            <div class="row">
 
-    <button class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+                {{ form_start(registrationForm) }}
+                <div class="row">
+                    <div class="form-group">
+                        {{ form_label(registrationForm.email) }}
+                        {{ form_widget(registrationForm.email) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        {{ form_label(registrationForm.firstName) }}
+                        {{ form_widget(registrationForm.firstName) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        {{ form_label(registrationForm.lastName) }}
+                        {{ form_widget(registrationForm.lastName) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        {{ form_label(registrationForm.plainPassword.first) }}
+                        {{ form_widget(registrationForm.plainPassword.first) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        {{ form_label(registrationForm.plainPassword.second) }}
+                        {{ form_widget(registrationForm.plainPassword.second) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <button class="btn">Register</button>
+                </div>
+                {{ form_end(registrationForm) }}
+
+            </div>
+        </div>
+    </main>
 {% endblock %}

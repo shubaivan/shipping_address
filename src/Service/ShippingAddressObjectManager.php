@@ -49,7 +49,7 @@ class ShippingAddressObjectManager extends ObjectManager
         $defaultShippingAddress = $this->getShippingAddressRepository()
             ->getCountDefaultByUser($this->tokenStorageInterface->getToken()->getUser());
         if (!$defaultShippingAddress) {
-            $model->setDefaultAddress(1);
+            $model->setDefaultAddress(true);
         }
         $this->getShippingAddressRepository()->save($model);
 

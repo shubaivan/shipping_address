@@ -17,9 +17,13 @@
                 {% endif %}
             </p>
         </div>
-        <a href="{{ path('app_login') }}" class="float-lg-left">
-            Login <i class="fas fa-door-open"></i>
-        </a>
+        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+            You are logged
+        {% else %}
+            <a href="{{ path('app_login') }}" class="float-lg-left">
+                Login <i class="fas fa-door-open"></i>
+            </a>
+        {% endif %}
 
         <a href="{{ path('app_register') }}" class="float-lg-right">
             Registration <i class="fas fa-registered"></i>

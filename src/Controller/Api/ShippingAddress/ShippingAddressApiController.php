@@ -4,10 +4,8 @@ namespace App\Controller\Api\ShippingAddress;
 
 use App\Controller\Api\AbstractRestController;
 use App\Entity\ShippingAddress;
-use App\Entity\User;
 use App\Exception\ValidatorException;
 use App\Repository\ShippingAddressRepository;
-use App\Service\ObjectManager;
 use App\Service\ShippingAddressObjectManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View as RestView;
@@ -15,10 +13,8 @@ use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ShippingAddressApiController extends AbstractRestController
 {

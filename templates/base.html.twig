@@ -45,6 +45,19 @@
                 <a href="{{ path('index') }}" class="navbar-brand d-flex align-items-center">
                     <i class="fas fa-home"></i>
                 </a>
+
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    You are logged
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="float-lg-left">
+                        Login <i class="fas fa-door-open"></i>
+                    </a>
+                {% endif %}
+
+                <a href="{{ path('app_register') }}" class="float-lg-right">
+                    Registration <i class="fas fa-registered"></i>
+                </a>
+
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader"
                         aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
